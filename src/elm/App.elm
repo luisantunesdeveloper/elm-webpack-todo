@@ -26,7 +26,8 @@ model =
 
 type Msg =
     ChangeText String
-    | AddNote
+    | AddItem
+    | RemoveItem
 
 
 update : Msg -> Model -> Model
@@ -40,7 +41,7 @@ update msg model =
                     }
             in
                 newModel
-        AddNote ->
+        AddItem ->
             let
                 newList = model.current :: model.content
                 newModel =
@@ -49,10 +50,19 @@ update msg model =
                     }
             in
                 newModel
+        RemoveItem ->
+            let
+                newContent = List.drop 1 model.content
+                newModel = { content = newContent
+                , current = model.current
+                }
+            in
+                newModel
+
 
 drawItem : String -> Html Msg
 drawItem item =
-    li []
+    li [ onClick RemoveItem ]
         [ text item ]
 
 
@@ -70,6 +80,6 @@ view : Model -> Html Msg
 view model =
     div []
         [ input [placeholder "notes", onInput ChangeText ] []
-        , button [ onClick AddNote ] [text "Add"]
+        , button [ onClick AddItem ] [text "Add"]
         , itemsList model
         ]
